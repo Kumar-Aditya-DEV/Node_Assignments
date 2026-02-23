@@ -36,8 +36,4 @@ GET /students/branch/:branchName
 npm install  
 node index.js  
 
-## Deployed Link
-(Add Render link here)
-
-
 
