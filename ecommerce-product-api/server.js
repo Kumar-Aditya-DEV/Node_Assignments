@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
+
 app.use(cors());
 app.use(express.json());
 
@@ -18,95 +19,132 @@ let products = [
 
 
 
-app.get("/products", (req, res) => {
-  res.status(200).json(products);
+app.get("/products", function(req, res) {
+  res.send(products);
 });
 
 
-app.get("/products/:id", (req, res) => {
-  const id = parseInt(req.params.id);
 
-  const product = products.find(p => p.id === id);
+app.get("/products/:id", function(req, res) {
 
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
+  let id = parseInt(req.params.id);
+
+  let product = products.find(function(p) {
+    return p.id === id;
+  });
+
+  if(product){
+    res.send(product);
+  } else {
+    res.send("Product not found");
   }
 
-  res.status(200).json(product);
-});
-
-
-app.get("/products/category/:categoryName", (req, res) => {
-  const category = req.params.categoryName;
-
-  const filtered = products.filter(
-    p => p.category.toLowerCase() === category.toLowerCase()
-  );
-
-  res.status(200).json(filtered);
 });
 
 
 
-app.post("/products", (req, res) => {
-  const newProduct = {
+
+app.get("/products/category/:categoryName", function(req, res) {
+
+  let category = req.params.categoryName;
+
+  let result = products.filter(function(p) {
+    return p.category.toLowerCase() === category.toLowerCase();
+  });
+
+  res.send(result);
+
+});
+
+
+
+
+app.post("/products", function(req, res) {
+
+  let newProduct = {
     id: products.length + 1,
-    ...req.body
+    name: req.body.name,
+    category: req.body.category,
+    price: req.body.price,
+    stock: req.body.stock,
+    rating: req.body.rating
   };
 
   products.push(newProduct);
 
-  res.status(201).json(newProduct);
+  res.send(newProduct);
+
 });
 
 
 
-app.put("/products/:id", (req, res) => {
-  const id = parseInt(req.params.id);
 
-  const index = products.findIndex(p => p.id === id);
+app.put("/products/:id", function(req, res) {
 
-  if (index === -1) {
-    return res.status(404).json({ message: "Product not found" });
+  let id = parseInt(req.params.id);
+
+  let product = products.find(function(p){
+    return p.id === id;
+  });
+
+  if(product){
+    product.name = req.body.name;
+    product.category = req.body.category;
+    product.price = req.body.price;
+    product.stock = req.body.stock;
+    product.rating = req.body.rating;
+
+    res.send(product);
+  }
+  else{
+    res.send("Product not found");
   }
 
-  products[index] = { id, ...req.body };
-
-  res.status(200).json(products[index]);
 });
 
 
 
-app.put("/products/:id/stock", (req, res) => {
-  const id = parseInt(req.params.id);
 
-  const product = products.find(p => p.id === id);
+app.put("/products/:id/stock", function(req, res) {
 
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
+  let id = parseInt(req.params.id);
+
+  let product = products.find(function(p){
+    return p.id === id;
+  });
+
+  if(product){
+    product.stock = req.body.stock;
+    res.send(product);
+  }
+  else{
+    res.send("Product not found");
   }
 
-  product.stock = req.body.stock;
-
-  res.status(200).json(product);
 });
 
 
-app.put("/products/:id/price", (req, res) => {
-  const id = parseInt(req.params.id);
 
-  const product = products.find(p => p.id === id);
+app.put("/products/:id/price", function(req, res) {
 
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
+  let id = parseInt(req.params.id);
+
+  let product = products.find(function(p){
+    return p.id === id;
+  });
+
+  if(product){
+    product.price = req.body.price;
+    res.send(product);
+  }
+  else{
+    res.send("Product not found");
   }
 
-  product.price = req.body.price;
-
-  res.status(200).json(product);
 });
 
 
-app.listen(5000, () => {
+
+app.listen(5000, function(){
   console.log("Server started on port 5000");
 });
